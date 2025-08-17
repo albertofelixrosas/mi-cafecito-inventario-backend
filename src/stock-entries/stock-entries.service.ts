@@ -1,26 +1,50 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { StockEntry } from './entities/stock-entry.entity';
 import { CreateStockEntryDto } from './dto/create-stock-entry.dto';
 import { UpdateStockEntryDto } from './dto/update-stock-entry.dto';
 
 @Injectable()
 export class StockEntriesService {
-  create(createStockEntryDto: CreateStockEntryDto) {
-    return 'This action adds a new stockEntry';
+  constructor(
+    @InjectRepository(StockEntry)
+    private readonly stockEntryRepository: Repository<StockEntry>,
+  ) {}
+
+  async create(createDto: CreateStockEntryDto): Promise<StockEntry> {
+    const entry = this.stockEntryRepository.create(createDto);
+    return this.stockEntryRepository.save(entry);
   }
 
-  findAll() {
-    return `This action returns all stockEntries`;
+  async findAll(): Promise<StockEntry[]> {
+    return this.stockEntryRepository.find({
+      relations: ['product', 'warehouse'],
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} stockEntry`;
+  async findOne(id: number): Promise<StockEntry> {
+    const entry = await this.stockEntryRepository.findOne({
+      where: { stockEntryId: id },
+      relations: ['product', 'warehouse'],
+    });
+    if (!entry) {
+      throw new NotFoundException(`StockEntry with ID ${id} not found`);
+    }
+    return entry;
   }
 
-  update(id: number, updateStockEntryDto: UpdateStockEntryDto) {
-    return `This action updates a #${id} stockEntry`;
+  async update(
+    id: number,
+    updateDto: UpdateStockEntryDto,
+  ): Promise<StockEntry> {
+    const entry = await this.findOne(id);
+    Object.assign(entry, updateDto);
+    return this.stockEntryRepository.save(entry);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} stockEntry`;
+  async remove(id: number): Promise<void> {
+    const entry = await this.findOne(id);
+    await this.stockEntryRepository.remove(entry);
   }
 }

@@ -6,7 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { validationSchema } from './config/validation';
 import { DatabaseModule } from './database/database.module';
 import { ProductsModule } from './products/products.module';
-import { ProductsCategoriesModule } from './products-categories/products-categories.module';
+import { ProductCategoriesModule } from './product-categories/product-categories.module';
 import { StockEntriesModule } from './stock-entries/stock-entries.module';
 import { StockWithdrawalsModule } from './stock-withdrawals/stock-withdrawals.module';
 import { StockLossesModule } from './stock-losses/stock-losses.module';
@@ -25,7 +25,7 @@ import { WarehousesModule } from './warehouses/warehouses.module';
     }),
     DatabaseModule,
     ProductsModule,
-    ProductsCategoriesModule,
+    ProductCategoriesModule,
     StockEntriesModule,
     StockWithdrawalsModule,
     StockLossesModule,

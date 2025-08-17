@@ -1,26 +1,48 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { StockLoss } from './entities/stock-loss.entity';
 import { CreateStockLossDto } from './dto/create-stock-loss.dto';
 import { UpdateStockLossDto } from './dto/update-stock-loss.dto';
 
 @Injectable()
 export class StockLossesService {
-  create(createStockLossDto: CreateStockLossDto) {
-    return 'This action adds a new stockLoss';
+  constructor(
+    @InjectRepository(StockLoss)
+    private readonly stockLossRepository: Repository<StockLoss>,
+  ) {}
+
+  async create(createStockLossDto: CreateStockLossDto): Promise<StockLoss> {
+    const stockLoss = this.stockLossRepository.create(createStockLossDto);
+    return this.stockLossRepository.save(stockLoss);
   }
 
-  findAll() {
-    return `This action returns all stockLosses`;
+  async findAll(): Promise<StockLoss[]> {
+    return this.stockLossRepository.find({
+      relations: ['product', 'warehouse'],
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} stockLoss`;
+  async findOne(id: number): Promise<StockLoss> {
+    const stockLoss = await this.stockLossRepository.findOne({
+      where: { stockLossId: id },
+      relations: ['product', 'warehouse'],
+    });
+    if (!stockLoss) throw new NotFoundException(`StockLoss ${id} not found`);
+    return stockLoss;
   }
 
-  update(id: number, updateStockLossDto: UpdateStockLossDto) {
-    return `This action updates a #${id} stockLoss`;
+  async update(
+    id: number,
+    updateStockLossDto: UpdateStockLossDto,
+  ): Promise<StockLoss> {
+    const stockLoss = await this.findOne(id);
+    Object.assign(stockLoss, updateStockLossDto);
+    return this.stockLossRepository.save(stockLoss);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} stockLoss`;
+  async remove(id: number): Promise<void> {
+    const stockLoss = await this.findOne(id);
+    await this.stockLossRepository.remove(stockLoss);
   }
 }

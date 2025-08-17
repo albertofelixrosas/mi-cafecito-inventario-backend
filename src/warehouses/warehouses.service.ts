@@ -1,26 +1,48 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Warehouse } from './entities/warehouse.entity';
 import { CreateWarehouseDto } from './dto/create-warehouse.dto';
 import { UpdateWarehouseDto } from './dto/update-warehouse.dto';
 
 @Injectable()
 export class WarehousesService {
-  create(createWarehouseDto: CreateWarehouseDto) {
-    return 'This action adds a new warehouse';
+  constructor(
+    @InjectRepository(Warehouse)
+    private readonly warehouseRepository: Repository<Warehouse>,
+  ) {}
+
+  async create(dto: CreateWarehouseDto): Promise<Warehouse> {
+    const warehouse = this.warehouseRepository.create(dto);
+    return await this.warehouseRepository.save(warehouse);
   }
 
-  findAll() {
-    return `This action returns all warehouses`;
+  async findAll(): Promise<Warehouse[]> {
+    return await this.warehouseRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} warehouse`;
+  async findOne(warehouseId: number): Promise<Warehouse> {
+    const warehouse = await this.warehouseRepository.findOne({
+      where: { warehouseId },
+    });
+    if (!warehouse)
+      throw new NotFoundException(`Warehouse #${warehouseId} not found`);
+    return warehouse;
   }
 
-  update(id: number, updateWarehouseDto: UpdateWarehouseDto) {
-    return `This action updates a #${id} warehouse`;
+  async update(
+    warehouseId: number,
+    dto: UpdateWarehouseDto,
+  ): Promise<Warehouse> {
+    const warehouse = await this.findOne(warehouseId);
+    Object.assign(warehouse, dto);
+    return await this.warehouseRepository.save(warehouse);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} warehouse`;
+  async remove(warehouseId: number): Promise<void> {
+    const result = await this.warehouseRepository.delete(warehouseId);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Warehouse #${warehouseId} not found`);
+    }
   }
 }
