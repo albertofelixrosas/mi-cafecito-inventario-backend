@@ -1,4 +1,3 @@
-// products/entities/product.entity.ts
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -17,22 +16,25 @@ export class Product {
   @PrimaryGeneratedColumn({ name: 'product_id', type: 'int' })
   productId: number;
 
+  @Column({ name: 'product_category_id' })
+  productCategoryId: number;
+
   @Column({ name: 'product_name', type: 'varchar', length: 255 })
   productName: string;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ name: 'unit_of_measurement', type: 'varchar', length: 50 })
   unitOfMeasurement: string;
 
   @Column({ type: 'varchar', length: 500, nullable: true })
   description?: string;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({ name: 'is_elaborated', type: 'boolean', default: false })
   isElaborated: boolean;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({ name: 'is_portioned', type: 'boolean', default: false })
   isPortioned: boolean;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ name: 'photo_url', type: 'text', nullable: true })
   photoUrl?: string;
 
   // FK a categoría (products.product_category_id -> product_categories.product_category_id)
@@ -42,13 +44,8 @@ export class Product {
   })
   @JoinColumn({
     name: 'product_category_id', // nombre de columna FK en DB (snake_case)
-    referencedColumnName: 'productCategoryId', // nombre de la PK en la entidad categoría
   })
-  productCategory: ProductCategory;
-
-  // Si quieres exponer el id crudo en respuestas/servicio sin duplicar columna:
-  // (no marques esto con @Column para evitar crear 2 columnas)
-  // productCategoryId?: number;
+  category: ProductCategory;
 
   @OneToMany(() => StockEntry, e => e.product)
   stockEntries: StockEntry[];

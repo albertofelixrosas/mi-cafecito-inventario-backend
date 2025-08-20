@@ -11,8 +11,11 @@ import { Warehouse } from '../../warehouses/entities/warehouse.entity';
 
 @Entity({ name: 'stock_withdrawals' })
 export class StockWithdrawal {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn({ name: 'stock_withdrawal_id' })
+  stockWithdrawalId: string;
+
+  @Column({ name: 'warehouse_id' })
+  warehouseId: number;
 
   @Column({ type: 'int', nullable: false })
   quantity: number;

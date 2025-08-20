@@ -15,6 +15,12 @@ export class StockLoss {
   @PrimaryGeneratedColumn({ name: 'stock_loss_id', type: 'int' })
   stockLossId: number;
 
+  @Column({ name: 'warehouse_id' })
+  warehouseId: number;
+
+  @Column({ name: 'product_id' })
+  productId: number;
+
   @Column({ type: 'int' })
   quantity: number;
 
@@ -30,7 +36,6 @@ export class StockLoss {
   })
   @JoinColumn({
     name: 'product_id',
-    referencedColumnName: 'productId',
   })
   product: Product;
 
@@ -40,7 +45,6 @@ export class StockLoss {
   })
   @JoinColumn({
     name: 'warehouse_id',
-    referencedColumnName: 'warehouseId',
   })
   warehouse: Warehouse;
 }

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsUUID, IsInt, Min, IsOptional, IsString } from 'class-validator';
+import { IsInt, Min, IsOptional, IsString } from 'class-validator';
 
 export class CreateStockLossDto {
   @ApiProperty({ example: 5, description: 'Cantidad de productos perdidos' })
@@ -12,11 +12,11 @@ export class CreateStockLossDto {
   @IsString()
   reason?: string;
 
-  @ApiProperty({ example: 'uuid-del-producto' })
-  @IsUUID()
-  productId: string;
+  @ApiProperty({ example: 1 })
+  @IsInt()
+  productId: number;
 
-  @ApiProperty({ example: 'uuid-del-almacen' })
-  @IsUUID()
-  warehouseId: string;
+  @ApiProperty({ example: 1 })
+  @IsInt()
+  warehouseId: number;
 }

@@ -15,7 +15,7 @@ export class Warehouse {
   @Column({ type: 'varchar', length: 500, nullable: true })
   location?: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ name: 'photo_url', type: 'text', nullable: true })
   photoUrl?: string;
 
   @OneToMany(() => StockEntry, e => e.warehouse)

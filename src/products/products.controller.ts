@@ -7,12 +7,14 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
+import { FilterProductsDto } from './dto/filter-products.dt';
 
 @ApiTags('Products')
 @Controller('products')
@@ -31,14 +33,27 @@ export class ProductsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Obtener todos los productos' })
-  @ApiResponse({
-    status: 200,
-    description: 'Lista de productos',
-    type: [Product],
+  @ApiQuery({
+    name: 'name',
+    required: false,
+    description: 'Filtrar por nombre de producto',
   })
-  findAll() {
-    return this.productsService.findAll();
+  @ApiQuery({
+    name: 'categoryId',
+    required: false,
+    description: 'Filtrar por ID de categoría',
+  })
+  @ApiQuery({ name: 'page', required: false, description: 'Número de página' })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Resultados por página',
+  })
+  @ApiOperation({
+    summary: 'Obtener lista de productos con filtros y paginación',
+  })
+  async findAll(@Query() filterDto: FilterProductsDto) {
+    return this.productsService.findAll(filterDto);
   }
 
   @Get(':id')

@@ -48,7 +48,7 @@ export class StockWithdrawalsService {
 
   async findOne(id: string): Promise<StockWithdrawal> {
     const withdrawal = await this.stockWithdrawalsRepository.findOne({
-      where: { id },
+      where: { stockWithdrawalId: id },
       relations: ['product', 'warehouse'],
     });
     if (!withdrawal) throw new NotFoundException('Retiro no encontrado');

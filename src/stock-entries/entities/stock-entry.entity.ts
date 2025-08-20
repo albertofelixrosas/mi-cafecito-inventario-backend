@@ -14,7 +14,13 @@ export class StockEntry {
   @PrimaryGeneratedColumn({ name: 'stock_entry_id', type: 'int' })
   stockEntryId: number;
 
-  @Column({ type: 'timestamp' })
+  @Column({ name: 'warehouse_id' })
+  warehouseId: number;
+
+  @Column({ name: 'product_id' })
+  productId: number;
+
+  @Column({ name: 'income_at', type: 'timestamp' })
   incomeAt: Date;
 
   @Column({ type: 'int' })
@@ -23,7 +29,7 @@ export class StockEntry {
   @Column({ type: 'varchar', length: 500, nullable: true })
   observations?: string;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ name: 'expiration_at', type: 'timestamp', nullable: true })
   expirationAt?: Date;
 
   @ManyToOne(() => Product, p => p.stockEntries, {
@@ -32,7 +38,6 @@ export class StockEntry {
   })
   @JoinColumn({
     name: 'product_id',
-    referencedColumnName: 'productId',
   })
   product: Product;
 
@@ -42,7 +47,6 @@ export class StockEntry {
   })
   @JoinColumn({
     name: 'warehouse_id',
-    referencedColumnName: 'warehouseId',
   })
   warehouse: Warehouse;
 }
