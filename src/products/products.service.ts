@@ -6,6 +6,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductCategory } from 'src/product-categories/entities/product-category.entity';
 import { FilterProductsDto } from './dto/filter-products.dt';
+import { ProductResponseDto } from './dto/product-response.dto';
 
 @Injectable()
 export class ProductsService {
@@ -29,13 +30,13 @@ export class ProductsService {
     return await this.productRepository.save(product);
   }
 
-  async findAll(filterDto: FilterProductsDto): Promise<Product[]> {
+  async findAll(filterDto: FilterProductsDto): Promise<ProductResponseDto> {
     const { name, categoryId, page = 1, limit = 10 } = filterDto;
 
     const query = this.productRepository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.category', 'category')
-      .orderBy('product.productName', 'ASC'); // 👈 campo real en la entidad
+      .orderBy('product.productName', 'ASC');
 
     if (name) {
       query.andWhere(
@@ -47,12 +48,25 @@ export class ProductsService {
     if (categoryId) {
       query.andWhere('category.productCategoryId = :categoryId', {
         categoryId,
-      }); // 👈 FK real en ProductCategory
+      });
     }
 
-    query.skip((page - 1) * limit).take(limit);
+    // 👇 obtener el total ANTES de aplicar paginación
+    const total = await query.getCount();
 
-    return await query.getMany();
+    // 👇 aplicar paginación
+    const data = await query
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getMany();
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      lastPage: Math.ceil(total / limit),
+    };
   }
 
   async findOne(productId: number): Promise<Product> {
