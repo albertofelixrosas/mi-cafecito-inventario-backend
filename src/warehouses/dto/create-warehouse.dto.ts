@@ -17,4 +17,12 @@ export class CreateWarehouseDto {
   @IsString()
   @IsOptional()
   location?: string;
+
+  @ApiPropertyOptional({
+    description: 'URL de la foto del almacén',
+    example: 'https://mi-cdn.com/almacenes/cocina.png',
+  })
+  @IsString()
+  @IsOptional()
+  photoUrl?: string;
 }
