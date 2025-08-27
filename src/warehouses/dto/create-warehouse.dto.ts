@@ -8,7 +8,7 @@ export class CreateWarehouseDto {
   })
   @IsString()
   @IsNotEmpty()
-  name: string;
+  warehouseName: string;
 
   @ApiPropertyOptional({
     description: 'Ubicación del almacén',

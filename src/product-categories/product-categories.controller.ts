@@ -28,6 +28,7 @@ export class ProductCategoriesController {
     description: 'La categoría fue creada exitosamente',
     type: ProductCategory,
   })
+  @ApiResponse({ status: 400, description: 'Datos inválidos' })
   create(@Body() createDto: CreateProductCategoryDto) {
     return this.productCategoriesService.create(createDto);
   }
