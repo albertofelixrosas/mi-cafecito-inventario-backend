@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { ProductCategory } from './entities/product-category.entity';
 import { CreateProductCategoryDto } from './dto/create-product-category.dto';
 import { UpdateProductCategoryDto } from './dto/update-product-category.dto';
+import { FilterProductCategoriesDto } from './dto/filter-product-categories.dt';
 
 @Injectable()
 export class ProductCategoriesService {
@@ -17,8 +18,22 @@ export class ProductCategoriesService {
     return this.categoryRepository.save(category);
   }
 
-  async findAll(): Promise<ProductCategory[]> {
-    return this.categoryRepository.find(/* { relations: ['products'] } */);
+  async findAll(
+    filters?: FilterProductCategoriesDto,
+  ): Promise<ProductCategory[]> {
+    const { name: search } = filters || {};
+    const query = this.categoryRepository
+      .createQueryBuilder('category')
+      .orderBy('category.productCategoryName', 'ASC');
+
+    if (search) {
+      query.where(
+        '(category.productCategoryName ILIKE :search OR category.description ILIKE :search)',
+        { search: `%${search}%` },
+      );
+    }
+
+    return query.getMany();
   }
 
   async findOne(id: number): Promise<ProductCategory> {

@@ -7,12 +7,14 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ProductCategoriesService } from './product-categories.service';
 import { CreateProductCategoryDto } from './dto/create-product-category.dto';
 import { UpdateProductCategoryDto } from './dto/update-product-category.dto';
 import { ProductCategory } from './entities/product-category.entity';
+import { FilterProductCategoriesDto } from './dto/filter-product-categories.dt';
 
 @ApiTags('Product Categories')
 @Controller('product-categories')
@@ -40,8 +42,8 @@ export class ProductCategoriesController {
     description: 'Lista de categorías',
     type: [ProductCategory],
   })
-  findAll() {
-    return this.productCategoriesService.findAll();
+  findAll(@Query() filterDto: FilterProductCategoriesDto) {
+    return this.productCategoriesService.findAll(filterDto);
   }
 
   @Get(':id')
