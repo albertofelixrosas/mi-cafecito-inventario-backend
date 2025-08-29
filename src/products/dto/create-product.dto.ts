@@ -57,4 +57,19 @@ export class CreateProductDto {
   })
   @IsInt()
   productCategoryId: number;
+
+  @ApiProperty({
+    example: '1928573849183',
+    description: 'Codigo de barras del producto (13 digitos)',
+  })
+  @IsOptional()
+  @IsNotEmpty()
+  barCode?: string;
+
+  @ApiProperty({
+    example: 4,
+    description: 'Cantidad de producto minimo antes de pedir más al comprar',
+  })
+  @IsOptional()
+  minStock?: number;
 }

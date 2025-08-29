@@ -34,6 +34,18 @@ export class Product {
   @Column({ name: 'is_portioned', type: 'boolean', default: false })
   isPortioned: boolean;
 
+  @Column({
+    name: 'bar_code',
+    length: 13,
+    type: 'varchar',
+    unique: true,
+    nullable: true,
+  })
+  barCode: string;
+
+  @Column({ name: 'min_stock', type: 'int' })
+  minStock: number;
+
   @Column({ name: 'photo_url', type: 'text', nullable: true })
   photoUrl?: string;
 
