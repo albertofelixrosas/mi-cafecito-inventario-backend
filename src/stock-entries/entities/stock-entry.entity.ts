@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Product } from '../../products/entities/product.entity';
 import { Warehouse } from '../../warehouses/entities/warehouse.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Entity('stock_entries')
 export class StockEntry {
@@ -49,4 +50,8 @@ export class StockEntry {
     name: 'warehouse_id',
   })
   warehouse: Warehouse;
+
+  @ManyToOne(() => User, { eager: true })
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 }

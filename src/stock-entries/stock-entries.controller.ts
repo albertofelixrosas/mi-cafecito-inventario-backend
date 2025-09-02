@@ -62,9 +62,9 @@ export class StockEntriesController {
   })
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateDto: UpdateStockEntryDto,
+    @Body() dto: UpdateStockEntryDto,
   ) {
-    return this.stockEntriesService.update(id, updateDto);
+    return this.stockEntriesService.update(id, dto);
   }
 
   @Delete(':id')

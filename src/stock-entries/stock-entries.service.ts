@@ -4,16 +4,46 @@ import { Repository } from 'typeorm';
 import { StockEntry } from './entities/stock-entry.entity';
 import { CreateStockEntryDto } from './dto/create-stock-entry.dto';
 import { UpdateStockEntryDto } from './dto/update-stock-entry.dto';
+import { Product } from 'src/products/entities/product.entity';
+import { Warehouse } from 'src/warehouses/entities/warehouse.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class StockEntriesService {
   constructor(
     @InjectRepository(StockEntry)
     private readonly stockEntryRepository: Repository<StockEntry>,
+    @InjectRepository(Product)
+    private readonly productRepository: Repository<Product>,
+    @InjectRepository(Warehouse)
+    private readonly warehouseRepository: Repository<Warehouse>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(createDto: CreateStockEntryDto): Promise<StockEntry> {
-    const entry = this.stockEntryRepository.create(createDto);
+  async create(dto: CreateStockEntryDto): Promise<StockEntry> {
+    const { productId, warehouseId, userId, ...rest } = dto;
+
+    const product = await this.productRepository.findOneBy({ productId });
+    const warehouse = await this.warehouseRepository.findOneBy({ warehouseId });
+    const user = await this.userRepository.findOneBy({ userId });
+
+    if (!product) {
+      throw new NotFoundException(`Product with ID ${productId} not found`);
+    }
+    if (!warehouse) {
+      throw new NotFoundException(`Warehouse with ID ${warehouseId} not found`);
+    }
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    const entry = this.stockEntryRepository.create({
+      ...rest,
+      product,
+      warehouse,
+      user,
+    });
     return this.stockEntryRepository.save(entry);
   }
 
@@ -34,12 +64,36 @@ export class StockEntriesService {
     return entry;
   }
 
-  async update(
-    id: number,
-    updateDto: UpdateStockEntryDto,
-  ): Promise<StockEntry> {
+  async update(id: number, dto: UpdateStockEntryDto): Promise<StockEntry> {
     const entry = await this.findOne(id);
-    Object.assign(entry, updateDto);
+
+    if (dto.productId) {
+      const product = await this.productRepository.findOneBy({
+        productId: dto.productId,
+      });
+      if (!product)
+        throw new NotFoundException(`Product ${dto.productId} not found`);
+      entry.product = product;
+    }
+
+    if (dto.warehouseId) {
+      const warehouse = await this.warehouseRepository.findOneBy({
+        warehouseId: dto.warehouseId,
+      });
+      if (!warehouse)
+        throw new NotFoundException(`Warehouse ${dto.warehouseId} not found`);
+      entry.warehouse = warehouse;
+    }
+
+    if (dto.userId) {
+      const user = await this.userRepository.findOneBy({
+        userId: dto.userId,
+      });
+      if (!user) throw new NotFoundException(`User ${dto.userId} not found`);
+      entry.user = user;
+    }
+
+    Object.assign(entry, dto);
     return this.stockEntryRepository.save(entry);
   }
 
