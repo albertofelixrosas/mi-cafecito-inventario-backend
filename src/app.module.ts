@@ -11,6 +11,7 @@ import { StockEntriesModule } from './stock-entries/stock-entries.module';
 import { StockWithdrawalsModule } from './stock-withdrawals/stock-withdrawals.module';
 import { StockLossesModule } from './stock-losses/stock-losses.module';
 import { WarehousesModule } from './warehouses/warehouses.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { WarehousesModule } from './warehouses/warehouses.module';
     StockWithdrawalsModule,
     StockLossesModule,
     WarehousesModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
