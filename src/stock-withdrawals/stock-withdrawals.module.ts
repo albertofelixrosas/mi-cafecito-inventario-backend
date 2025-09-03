@@ -5,9 +5,12 @@ import { Product } from '../products/entities/product.entity';
 import { Warehouse } from '../warehouses/entities/warehouse.entity';
 import { StockWithdrawalsService } from './stock-withdrawals.service';
 import { StockWithdrawalsController } from './stock-withdrawals.controller';
+import { User } from 'src/users/entities/user.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([StockWithdrawal, Product, Warehouse])],
+  imports: [
+    TypeOrmModule.forFeature([StockWithdrawal, Product, Warehouse, User]),
+  ],
   controllers: [StockWithdrawalsController],
   providers: [StockWithdrawalsService],
   exports: [StockWithdrawalsService], // opcional si lo usarás en otros módulos

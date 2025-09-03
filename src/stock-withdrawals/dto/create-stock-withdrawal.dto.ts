@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsInt, Min } from 'class-validator';
 
 export class CreateStockWithdrawalDto {
@@ -20,4 +20,17 @@ export class CreateStockWithdrawalDto {
   })
   @IsInt()
   warehouseId: number;
+
+  @ApiProperty({
+    example: 1,
+    description: 'ID del usuario que realiza la retirada',
+  })
+  @IsInt()
+  userId: number;
+
+  @ApiPropertyOptional({
+    example: 'Retiro para una orden de venta',
+    description: 'Observaciones sobre la retirada',
+  })
+  observations?: string;
 }

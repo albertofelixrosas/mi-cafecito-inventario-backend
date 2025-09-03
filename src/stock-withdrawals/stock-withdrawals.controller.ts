@@ -35,19 +35,19 @@ export class StockWithdrawalsController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Obtener un retiro por su ID' })
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.stockWithdrawalsService.findOne(id);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Actualizar un retiro de inventario' })
-  update(@Param('id') id: string, @Body() dto: UpdateStockWithdrawalDto) {
+  update(@Param('id') id: number, @Body() dto: UpdateStockWithdrawalDto) {
     return this.stockWithdrawalsService.update(id, dto);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar un retiro de inventario' })
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     return this.stockWithdrawalsService.remove(id);
   }
 }

@@ -21,6 +21,9 @@ export class StockEntry {
   @Column({ name: 'product_id' })
   productId: number;
 
+  @Column({ name: 'user_id' })
+  userId: number;
+
   @Column({ name: 'income_at', type: 'timestamp' })
   incomeAt: Date;
 
