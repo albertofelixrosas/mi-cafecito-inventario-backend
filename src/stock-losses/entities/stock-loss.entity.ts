@@ -22,14 +22,17 @@ export class StockLoss {
   @Column({ name: 'product_id' })
   productId: number;
 
+  @Column({ name: 'user_id' })
+  userId: number;
+
   @Column({ type: 'int' })
   quantity: number;
 
   @Column({ type: 'text', nullable: true })
   reason?: string;
 
-  @CreateDateColumn({ name: 'loss_date', type: 'timestamp with time zone' })
-  lossDate: Date;
+  @CreateDateColumn({ name: 'loss_at', type: 'timestamp with time zone' })
+  lossAt: Date;
 
   @ManyToOne(() => Product, p => p.stockLosses, {
     onDelete: 'RESTRICT',

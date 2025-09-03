@@ -5,7 +5,7 @@ import {
   Body,
   Param,
   Delete,
-  Put,
+  Patch,
 } from '@nestjs/common';
 import { StockLossesService } from './stock-losses.service';
 import { CreateStockLossDto } from './dto/create-stock-loss.dto';
@@ -35,7 +35,7 @@ export class StockLossesController {
     return this.stockLossesService.findOne(id);
   }
 
-  @Put(':id')
+  @Patch(':id')
   @ApiOperation({ summary: 'Actualizar una pérdida de stock por ID' })
   update(
     @Param('id') id: number,

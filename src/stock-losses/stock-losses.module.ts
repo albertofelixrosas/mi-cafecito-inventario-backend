@@ -5,9 +5,10 @@ import { Warehouse } from 'src/warehouses/entities/warehouse.entity';
 import { Product } from 'src/products/entities/product.entity';
 import { StockLoss } from './entities/stock-loss.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from 'src/users/entities/user.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([StockLoss, Product, Warehouse])],
+  imports: [TypeOrmModule.forFeature([StockLoss, Product, Warehouse, User])],
   controllers: [StockLossesController],
   providers: [StockLossesService],
   exports: [StockLossesService],

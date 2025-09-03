@@ -1,9 +1,13 @@
+import { StockEntry } from 'src/stock-entries/entities/stock-entry.entity';
+import { StockLoss } from 'src/stock-losses/entities/stock-loss.entity';
+import { StockWithdrawal } from 'src/stock-withdrawals/entities/stock-withdrawal.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 @Entity('users')
@@ -25,4 +29,14 @@ export class User {
 
   @UpdateDateColumn({ type: 'timestamp', name: 'updated_at' })
   updatedAt: Date;
+
+  // 🔗 Relaciones inversas
+  @OneToMany(() => StockEntry, entry => entry.user)
+  entries: StockEntry[];
+
+  @OneToMany(() => StockWithdrawal, withdrawal => withdrawal.user)
+  withdrawals: StockWithdrawal[];
+
+  @OneToMany(() => StockLoss, loss => loss.user)
+  losses: StockLoss[];
 }
