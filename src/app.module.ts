@@ -12,6 +12,10 @@ import { StockWithdrawalsModule } from './stock-withdrawals/stock-withdrawals.mo
 import { StockLossesModule } from './stock-losses/stock-losses.module';
 import { WarehousesModule } from './warehouses/warehouses.module';
 import { UsersModule } from './users/users.module';
+import { RolesModule } from './roles/roles.module';
+import { PermissionsModule } from './permissions/permissions.module';
+import { UserPermissionsModule } from './user-permissions/user-permissions.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -32,6 +36,10 @@ import { UsersModule } from './users/users.module';
     StockLossesModule,
     WarehousesModule,
     UsersModule,
+    RolesModule,
+    PermissionsModule,
+    UserPermissionsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

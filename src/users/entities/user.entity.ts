@@ -1,6 +1,8 @@
+import { Role } from 'src/roles/entities/role.entity';
 import { StockEntry } from 'src/stock-entries/entities/stock-entry.entity';
 import { StockLoss } from 'src/stock-losses/entities/stock-loss.entity';
 import { StockWithdrawal } from 'src/stock-withdrawals/entities/stock-withdrawal.entity';
+import { UserPermission } from 'src/user-permissions/entities/user-permission.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -8,6 +10,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 
 @Entity('users')
@@ -39,4 +43,15 @@ export class User {
 
   @OneToMany(() => StockLoss, loss => loss.user)
   losses: StockLoss[];
+
+  @ManyToMany(() => Role, role => role.users, { cascade: false })
+  @JoinTable({
+    name: 'user_roles',
+    joinColumn: { name: 'user_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'role_id', referencedColumnName: 'id' },
+  })
+  roles: Role[];
+
+  @OneToMany(() => UserPermission, up => up.user, { cascade: true })
+  userPermissions: UserPermission[];
 }
