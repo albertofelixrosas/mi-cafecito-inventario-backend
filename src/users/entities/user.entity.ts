@@ -25,6 +25,12 @@ export class User {
   @Column({ type: 'varchar', length: 100 })
   lastname: string;
 
+  @Column({ type: 'varchar', length: 150, unique: true })
+  email: string;
+
+  @Column({ type: 'varchar', length: 255 })
+  passwordHash: string;
+
   @Column({ type: 'varchar', length: 50 })
   role: string; // Más adelante puedes cambiarlo a ENUM
 

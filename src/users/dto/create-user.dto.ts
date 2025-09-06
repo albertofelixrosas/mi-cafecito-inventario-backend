@@ -19,4 +19,19 @@ export class CreateUserDto {
   @IsNotEmpty()
   @MaxLength(50)
   role: string;
+
+  @ApiProperty({
+    example: 'email@domain.com',
+    description: 'Email of the user',
+  })
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(150)
+  email: string;
+
+  @ApiProperty({ example: 'strongPassword123', description: 'Password' })
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(50)
+  password: string;
 }

@@ -1,8 +1,10 @@
 // src/auth/auth.service.ts
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable /* UnauthorizedException */ } from '@nestjs/common';
 import { UsersService } from '../users/users.service'; // asume que tienes un UsersService
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { User } from 'src/users/entities/user.entity';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -20,10 +22,10 @@ export class AuthService {
     return user;
   }
 
-  async login(user: any) {
+  login(user: User) {
     // firma un payload pequeño: sub (user id), email, roles[]
     const payload = {
-      sub: user.id,
+      sub: user.userId,
       email: user.email,
       roles: (user.roles ?? []).map(r => r.name),
     };
@@ -33,15 +35,11 @@ export class AuthService {
     };
   }
 
-  async register(createDto: {
-    email: string;
-    password: string;
-    name?: string;
-  }) {
+  async register(createDto: CreateUserDto) {
     const hash = await bcrypt.hash(createDto.password, 10);
     const user = await this.usersService.create({
       ...createDto,
-      passwordHash: hash,
+      password: hash,
     });
     // no retornes passwordHash al frontend
     return user;

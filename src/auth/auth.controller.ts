@@ -1,17 +1,9 @@
 // src/auth/auth.controller.ts
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Public } from './public.decorator';
-
-class LoginDto {
-  email: string;
-  password: string;
-}
-class RegisterDto {
-  email: string;
-  password: string;
-  name?: string;
-}
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { LoginDto } from './types/login';
 
 @Controller('auth')
 export class AuthController {
@@ -27,7 +19,7 @@ export class AuthController {
 
   @Public()
   @Post('register')
-  async register(@Body() dto: RegisterDto) {
+  async register(@Body() dto: CreateUserDto) {
     return this.authService.register(dto);
   }
 }
