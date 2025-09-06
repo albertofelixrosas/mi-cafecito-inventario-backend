@@ -13,7 +13,7 @@ import { User } from '../../users/entities/user.entity';
 @Unique(['name'])
 export class Role {
   @PrimaryGeneratedColumn()
-  id: number;
+  roleId: number;
 
   @Column({ length: 64 })
   name: string; // ej. "ADMIN", "GERENTE", "EMPLEADO"
@@ -21,8 +21,11 @@ export class Role {
   @ManyToMany(() => Permission, p => p.roles, { cascade: false })
   @JoinTable({
     name: 'role_permissions',
-    joinColumn: { name: 'role_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'permission_id', referencedColumnName: 'id' },
+    joinColumn: { name: 'role_id', referencedColumnName: 'roleId' },
+    inverseJoinColumn: {
+      name: 'permission_id',
+      referencedColumnName: 'permissionId',
+    },
   })
   permissions: Permission[];
 

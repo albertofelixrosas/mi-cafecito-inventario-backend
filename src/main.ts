@@ -1,16 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerTheme, SwaggerThemeNameEnum } from 'swagger-themes';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
-  const configService = app.get(ConfigService);
-
-  console.log(`FRONTEND_URL: ${configService.get<string>('FRONTEND_URL')}`);
 
   app.enableCors({
     origin: '*',
@@ -29,7 +24,17 @@ async function bootstrap() {
     .setTitle('Mi Cafecito API')
     .setDescription('Documentación de la API de Mi Cafecito')
     .setVersion('1.0')
-    // .addBearerAuth() // opcional: si usas JWT
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        description: 'Introduce el token JWT con el prefijo Bearer',
+        in: 'header',
+      },
+      'JWT-auth', // 🔑 Este es el nombre de la referencia (puedes ponerle cualquier string)
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
@@ -41,6 +46,9 @@ async function bootstrap() {
 
   SwaggerModule.setup('api', app, document, {
     customCss: darkTheme,
+    swaggerOptions: {
+      persistAuthorization: true, // mantiene el token aunque recargues la página
+    },
   });
 
   SwaggerModule.setup('api', app, document);

@@ -37,11 +37,15 @@ export class AuthService {
 
   async register(createDto: CreateUserDto) {
     const hash = await bcrypt.hash(createDto.password, 10);
+
     const user = await this.usersService.create({
       ...createDto,
-      password: hash,
+      passwordHash: hash, // 👈 en la entidad se guarda passwordHash
     });
-    // no retornes passwordHash al frontend
+
+    // No exponemos el hash
+    delete (user as any).passwordHash;
+
     return user;
   }
 }
