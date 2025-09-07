@@ -2,7 +2,6 @@
 import { Controller, Post, Body, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Public } from './public.decorator';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { LoginDto } from './types/login';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 
@@ -25,30 +24,35 @@ export class AuthController {
     },
   })
   @ApiResponse({ status: 401, description: 'Credenciales incorrectas' })
-  async login(@Body() dto: LoginDto) {
-    const user = await this.authService.validateUser(dto.email, dto.password);
-    if (!user) throw new UnauthorizedException('Credenciales incorrectas');
-    return this.authService.login(user);
-  }
-
-  @Public()
-  @Post('register')
-  @ApiOperation({ summary: 'Registrar un nuevo usuario' })
-  @ApiBody({ type: CreateUserDto, description: 'Datos para crear usuario' })
-  @ApiResponse({
-    status: 201,
-    description: 'Usuario creado correctamente',
-    schema: {
-      example: {
-        id: 1,
-        email: 'usuario@example.com',
-        name: 'Juan Pérez',
-        createdAt: '2025-09-05T12:00:00.000Z',
-      },
-    },
-  })
-  @ApiResponse({ status: 400, description: 'Error en validación de datos' })
-  async register(@Body() dto: CreateUserDto) {
-    return this.authService.register(dto);
+  async login(@Body() body: LoginDto) {
+    try {
+      if (!body.identifier || !body.password) {
+        throw new UnauthorizedException('Credenciales incompletas');
+      }
+      const user = await this.authService.validateUser(
+        body.identifier,
+        body.password,
+      );
+      if (!user) {
+        throw new UnauthorizedException('Credenciales incorrectas');
+      }
+      return this.authService.login({
+        role: user.role,
+        username: user.username,
+        user_id: user.userId,
+      });
+    } catch (error) {
+      // Manejar errores específicos de validación
+      if (error instanceof UnauthorizedException) {
+        // Log the error for debugging purposes
+        throw error; // Re-throw the error to be handled by the global exception filter
+      }
+      // Log cualquier otro error inesperado
+      if (error instanceof Error) {
+        // Log the error for debugging purposes
+        console.error('Error al iniciar sesión:', error.message);
+      }
+      throw new UnauthorizedException('Error al iniciar sesión');
+    }
   }
 }

@@ -14,11 +14,16 @@ export class CreateUserDto {
   @MaxLength(100)
   lastname: string;
 
-  @ApiProperty({ example: 'admin', description: 'Role of the user' })
+  @ApiProperty({ example: 'luis123', description: 'Username' })
   @IsString()
   @IsNotEmpty()
-  @MaxLength(50)
-  role: string;
+  @MaxLength(20)
+  username: string;
+
+  @ApiProperty({ example: '6421910021', description: 'Phone number' })
+  @IsString()
+  @MaxLength(15)
+  phone?: string;
 
   @ApiProperty({
     example: 'email@domain.com',
@@ -28,6 +33,12 @@ export class CreateUserDto {
   @IsNotEmpty()
   @MaxLength(150)
   email: string;
+
+  @ApiProperty({ example: 'admin', description: 'Role of the user' })
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(50)
+  role: string;
 
   @ApiProperty({ example: 'strongPassword123', description: 'Password' })
   @IsString()

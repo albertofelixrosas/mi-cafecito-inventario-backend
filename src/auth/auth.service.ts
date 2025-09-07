@@ -3,8 +3,8 @@ import { Injectable /* UnauthorizedException */ } from '@nestjs/common';
 import { UsersService } from '../users/users.service'; // asume que tienes un UsersService
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { UserPayload } from './dto/user-payload.interface';
 import { User } from 'src/users/entities/user.entity';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -13,39 +13,48 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, password: string) {
-    const user = await this.usersService.findByEmail(email);
-    if (!user) return null;
-    const matched = await bcrypt.compare(password, user.passwordHash);
-    if (!matched) return null;
-    // Opcional: carga roles si no vienen cargadas
+  async validateUser(username: string, password: string): Promise<User | null> {
+    // Buscar usuario por username, email o phoneNumber en UNA sola consulta
+    const user = await this.usersService.findByUsernameOrEmailOrPhone(username);
+
+    if (!user) {
+      return null;
+    }
+
+    // Verificar la contraseña
+    const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+    if (!isPasswordValid) {
+      return null;
+    }
+
     return user;
   }
 
-  login(user: User) {
-    // firma un payload pequeño: sub (user id), email, roles[]
+  login(user: UserPayload) {
     const payload = {
-      sub: user.userId,
-      email: user.email,
-      roles: (user.roles ?? []).map(r => r.name),
+      username: user.username,
+      sub: user.user_id,
+      role: user.role,
     };
-    return {
-      access_token: this.jwtService.sign(payload),
-      // opcional: retorna info extra (user data, expiresAt, etc)
-    };
-  }
 
-  async register(createDto: CreateUserDto) {
-    const hash = await bcrypt.hash(createDto.password, 10);
+    const access_token = this.jwtService.sign(payload, { expiresIn: '60m' });
+    // const refresh_token = this.jwtService.sign(payload, { expiresIn: '7d' });
 
-    const user = await this.usersService.create({
-      ...createDto,
-      passwordHash: hash, // 👈 en la entidad se guarda passwordHash
+    /*const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
+    const tokenEntity = this.refreshTokenRepo.create({
+      token: refresh_token,
+      user: { user_id: user.user_id },
+      expires_at: expiresAt,
     });
 
-    // No exponemos el hash
-    delete (user as any).passwordHash;
-
-    return user;
+    await this.refreshTokenRepo.save(tokenEntity);
+    */
+    return {
+      access_token,
+      // refresh_token,
+      username: user.username,
+      role: user.role,
+    };
   }
 }

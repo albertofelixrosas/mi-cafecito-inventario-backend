@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -12,8 +13,13 @@ export class UsersService {
     private readonly usersRepository: Repository<User>,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    const user = this.usersRepository.create(createUserDto);
+  async create(dto: CreateUserDto): Promise<User> {
+    const hashedPassword = await bcrypt.hash(dto.password, 10);
+
+    const user = this.usersRepository.create({
+      ...dto,
+      passwordHash: hashedPassword,
+    });
     return this.usersRepository.save(user);
   }
 
@@ -33,6 +39,30 @@ export class UsersService {
     return this.usersRepository
       .find({ where: { email } })
       .then(users => users[0] || null);
+  }
+
+  async findByUsername(username: string): Promise<User | null> {
+    return this.usersRepository
+      .find({ where: { username } })
+      .then(users => users[0] || null);
+  }
+
+  async findByPhone(phone: string): Promise<User | null> {
+    return this.usersRepository
+      .find({ where: { phone } })
+      .then(users => users[0] || null);
+  }
+
+  findByUsernameOrEmailOrPhone(identifier: string): Promise<User | null> {
+    return this.usersRepository.findOne({
+      where: [
+        { username: identifier },
+        { email: identifier.toLowerCase() }, // Normalizar email
+        { phone: identifier },
+      ],
+      // Cargar relaciones si es necesario
+      relations: ['roles', 'userPermissions'],
+    });
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
