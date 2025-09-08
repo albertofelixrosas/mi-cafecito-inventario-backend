@@ -8,7 +8,6 @@ import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 import { AuthController } from './auth.controller';
 import { User } from '../users/entities/user.entity';
-import { Role } from '../roles/entities/role.entity';
 import { Permission } from '../permissions/entities/permission.entity';
 import { UserPermission } from '../user-permissions/entities/user-permission.entity';
 import { UsersModule } from 'src/users/users.module';
@@ -17,7 +16,7 @@ import { UsersModule } from 'src/users/users.module';
   imports: [
     ConfigModule,
     PassportModule,
-    TypeOrmModule.forFeature([User, Role, Permission, UserPermission]),
+    TypeOrmModule.forFeature([User, Permission, UserPermission]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (cfg: ConfigService) => ({

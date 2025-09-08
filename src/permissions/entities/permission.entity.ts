@@ -3,10 +3,8 @@ import {
   PrimaryGeneratedColumn,
   Column,
   Unique,
-  ManyToMany,
   OneToMany,
 } from 'typeorm';
-import { Role } from '../../roles/entities/role.entity';
 import { UserPermission } from '../../user-permissions/entities/user-permission.entity';
 
 @Entity('permissions')
@@ -24,9 +22,6 @@ export class Permission {
 
   @Column({ length: 128 })
   code: string; // ej. "entradas.view"
-
-  @ManyToMany(() => Role, role => role.permissions)
-  roles: Role[];
 
   @OneToMany(() => UserPermission, up => up.permission)
   userPermissions: UserPermission[];

@@ -1,4 +1,3 @@
-import { Role } from 'src/roles/entities/role.entity';
 import { StockEntry } from 'src/stock-entries/entities/stock-entry.entity';
 import { StockLoss } from 'src/stock-losses/entities/stock-loss.entity';
 import { StockWithdrawal } from 'src/stock-withdrawals/entities/stock-withdrawal.entity';
@@ -10,9 +9,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
-  ManyToMany,
-  JoinTable,
 } from 'typeorm';
+import { UserRole } from '../enums/user-role.enum';
 
 @Entity('users')
 export class User {
@@ -28,8 +26,8 @@ export class User {
   @Column({ type: 'varchar', length: 20, unique: true })
   username: string;
 
-  @Column({ type: 'varchar', length: 150, unique: true })
-  email: string;
+  @Column({ type: 'varchar', length: 150, nullable: true, unique: true })
+  email?: string;
 
   @Column({ type: 'varchar', length: 15, nullable: true })
   phone?: string;
@@ -37,8 +35,13 @@ export class User {
   @Column({ type: 'varchar', length: 255 })
   passwordHash: string;
 
-  @Column({ type: 'varchar', length: 50 })
-  role: string; // Más adelante puedes cambiarlo a ENUM
+  // 🔑 ÚNICO rol del usuario
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.CHEF,
+  })
+  role: UserRole;
 
   @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   createdAt: Date;
@@ -55,14 +58,6 @@ export class User {
 
   @OneToMany(() => StockLoss, loss => loss.user)
   losses: StockLoss[];
-
-  @ManyToMany(() => Role, role => role.users, { cascade: false })
-  @JoinTable({
-    name: 'user_roles',
-    joinColumn: { name: 'user_id', referencedColumnName: 'userId' },
-    inverseJoinColumn: { name: 'role_id', referencedColumnName: 'roleId' },
-  })
-  roles: Role[];
 
   @OneToMany(() => UserPermission, up => up.user, { cascade: true })
   userPermissions: UserPermission[];
