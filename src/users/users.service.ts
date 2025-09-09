@@ -61,7 +61,7 @@ export class UsersService {
         { phone: identifier },
       ],
       // Cargar relaciones si es necesario
-      relations: ['roles', 'userPermissions'],
+      relations: ['userPermissions'],
     });
   }
 
