@@ -2,6 +2,5 @@
 
 export interface UserPayload {
   user_id: number;
-  username: string;
-  role: string;
+  fullName?: string;
 }

@@ -49,6 +49,10 @@ export class User {
   @UpdateDateColumn({ type: 'timestamp', name: 'updated_at' })
   updatedAt: Date;
 
+  // Guardamos el refresh token hasheado
+  @Column({ nullable: true })
+  hashedRefreshToken?: string;
+
   // 🔗 Relaciones inversas
   @OneToMany(() => StockEntry, entry => entry.user)
   entries: StockEntry[];

@@ -1,16 +1,21 @@
 // src/auth/auth.service.ts
-import { Injectable /* UnauthorizedException */ } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable /* UnauthorizedException */,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service'; // asume que tienes un UsersService
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UserPayload } from './dto/user-payload.interface';
 import { User } from 'src/users/entities/user.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private cfg: ConfigService,
   ) {}
 
   async validateUser(username: string, password: string): Promise<User | null> {
@@ -30,31 +35,59 @@ export class AuthService {
     return user;
   }
 
-  login(user: UserPayload) {
-    const payload = {
-      username: user.username,
-      sub: user.user_id,
-      role: user.role,
-    };
-
-    const access_token = this.jwtService.sign(payload, { expiresIn: '60m' });
-    // const refresh_token = this.jwtService.sign(payload, { expiresIn: '7d' });
-
-    /*const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-
-    const tokenEntity = this.refreshTokenRepo.create({
-      token: refresh_token,
-      user: { user_id: user.user_id },
-      expires_at: expiresAt,
-    });
-
-    await this.refreshTokenRepo.save(tokenEntity);
-    */
+  async login(user: UserPayload) {
+    const tokens = await this.getTokens(user.user_id);
+    await this.updateRefreshToken(user.user_id, tokens.refreshToken);
     return {
-      access_token,
-      // refresh_token,
-      username: user.username,
-      role: user.role,
+      ...tokens,
+      user: { user_id: user.user_id, fullName: user.fullName },
     };
+  }
+
+  async getTokens(userId: number) {
+    const accessToken = await this.jwtService.signAsync(
+      {
+        sub: userId,
+      },
+      {
+        secret: this.cfg.get('JWT_ACCESS_SECRET'),
+        expiresIn: this.cfg.get('JWT_ACCESS_EXPIRES') || '15m',
+      },
+    );
+
+    const refreshToken = await this.jwtService.signAsync(
+      {
+        sub: userId,
+      },
+      {
+        secret: this.cfg.get('JWT_REFRESH_SECRET'),
+        expiresIn: this.cfg.get('JWT_REFRESH_EXPIRES') || '7d',
+      },
+    );
+
+    return { accessToken, refreshToken };
+  }
+
+  async updateRefreshToken(userId: number, refreshToken: string) {
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+    // Aquí usas tu UserRepository de TypeORM
+    await this.usersService.update(userId, { hashedRefreshToken });
+  }
+
+  async refreshTokens(userId: number, refreshToken: string) {
+    const user = await this.usersService.findOne(userId);
+    if (!user || !user.hashedRefreshToken)
+      throw new ForbiddenException('Access Denied');
+
+    const tokenMatches = await bcrypt.compare(
+      refreshToken,
+      user.hashedRefreshToken,
+    );
+    if (!tokenMatches) throw new ForbiddenException('Access Denied');
+
+    const tokens = await this.getTokens(userId);
+    await this.updateRefreshToken(userId, tokens.refreshToken);
+
+    return tokens;
   }
 }

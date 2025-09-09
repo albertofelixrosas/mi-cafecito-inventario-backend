@@ -37,9 +37,8 @@ export class AuthController {
         throw new UnauthorizedException('Credenciales incorrectas');
       }
       return this.authService.login({
-        role: user.role,
-        username: user.username,
         user_id: user.userId,
+        fullName: `${user.name} ${user.lastname}`,
       });
     } catch (error) {
       // Manejar errores específicos de validación
@@ -54,5 +53,16 @@ export class AuthController {
       }
       throw new UnauthorizedException('Error al iniciar sesión');
     }
+  }
+
+  @Post('refresh')
+  refreshTokens(
+    @Body('refreshToken') refreshToken: string, // <- lo recibe del cliente
+    @Body('userId') userId: number, // o lo sacas de otro lado
+  ) {
+    if (!userId || !refreshToken) {
+      throw new UnauthorizedException('Credenciales inválidas');
+    }
+    return this.authService.refreshTokens(userId, refreshToken);
   }
 }
