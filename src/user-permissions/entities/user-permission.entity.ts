@@ -16,6 +16,12 @@ export class UserPermission {
   @PrimaryGeneratedColumn({ type: 'int', name: 'user_permission_id' })
   userPermissionId: number;
 
+  @Column({ name: 'permission_id' })
+  permissionId: number;
+
+  @Column({ name: 'user_id' })
+  userId: number;
+
   @ManyToOne(() => User, u => u.userPermissions, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'userId' })
   @Index()

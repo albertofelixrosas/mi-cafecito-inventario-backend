@@ -11,7 +11,7 @@ import { UserPermission } from '../../user-permissions/entities/user-permission.
 @Unique(['code'])
 @Unique(['resource', 'action'])
 export class Permission {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: 'permission_id' })
   permissionId: number;
 
   @Column({ length: 64 })
