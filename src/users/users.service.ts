@@ -5,12 +5,19 @@ import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
+import { RolePermissions } from 'src/auth/role-permissions.map';
+import { UserPermission } from 'src/user-permissions/entities/user-permission.entity';
+import { Permission } from 'src/permissions/entities/permission.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+    @InjectRepository(UserPermission)
+    private readonly userPermissionsRepo: Repository<UserPermission>,
+    @InjectRepository(Permission)
+    private readonly permissionsRepo: Repository<Permission>,
   ) {}
 
   async create(dto: CreateUserDto): Promise<User> {
@@ -20,7 +27,28 @@ export class UsersService {
       ...dto,
       passwordHash: hashedPassword,
     });
-    return this.usersRepository.save(user);
+    const savedUser = await this.usersRepository.save(user);
+
+    const basePermissions = RolePermissions[savedUser.role];
+
+    for (const perm of basePermissions) {
+      // Buscar el permiso en la tabla "permissions"
+      const dbPermission = await this.permissionsRepo.findOne({
+        where: { resource: perm.resource, action: perm.action },
+      });
+
+      if (dbPermission) {
+        const userPerm = this.userPermissionsRepo.create({
+          user: savedUser,
+          permission: dbPermission,
+          allowed: true, // por defecto los que vienen del rol están permitidos
+        });
+
+        await this.userPermissionsRepo.save(userPerm);
+      }
+    }
+
+    return savedUser;
   }
 
   async findAll(): Promise<User[]> {
