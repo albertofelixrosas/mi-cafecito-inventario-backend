@@ -6,7 +6,7 @@ import { CreateStockWithdrawalDto } from './dto/create-stock-withdrawal.dto';
 import { UpdateStockWithdrawalDto } from './dto/update-stock-withdrawal.dto';
 import { Product } from '../products/entities/product.entity';
 import { Warehouse } from '../warehouses/entities/warehouse.entity';
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class StockWithdrawalsService {

@@ -1,7 +1,7 @@
-import { StockEntry } from 'src/stock-entries/entities/stock-entry.entity';
-import { StockLoss } from 'src/stock-losses/entities/stock-loss.entity';
-import { StockWithdrawal } from 'src/stock-withdrawals/entities/stock-withdrawal.entity';
-import { UserPermission } from 'src/user-permissions/entities/user-permission.entity';
+import { StockEntry } from '../../stock-entries/entities/stock-entry.entity';
+import { StockLoss } from '../../stock-losses/entities/stock-loss.entity';
+import { StockWithdrawal } from '../../stock-withdrawals/entities/stock-withdrawal.entity';
+import { UserPermission } from '../../user-permissions/entities/user-permission.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -10,7 +10,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { UserRole } from '../enums/user-role.enum';
+import { UserRole } from '../../shared/enums/user-role.enum';
 
 @Entity('users')
 export class User {

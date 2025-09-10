@@ -5,7 +5,7 @@ import { ProductCategory } from './entities/product-category.entity';
 import { CreateProductCategoryDto } from './dto/create-product-category.dto';
 import { UpdateProductCategoryDto } from './dto/update-product-category.dto';
 import { FilterProductCategoriesDto } from './dto/filter-product-categories.dt';
-import { Product } from 'src/products/entities/product.entity';
+import { Product } from '../products/entities/product.entity';
 
 @Injectable()
 export class ProductCategoriesService {

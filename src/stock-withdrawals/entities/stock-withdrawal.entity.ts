@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { Product } from '../../products/entities/product.entity';
 import { Warehouse } from '../../warehouses/entities/warehouse.entity';
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../../users/entities/user.entity';
 
 @Entity({ name: 'stock_withdrawals' })
 export class StockWithdrawal {

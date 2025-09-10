@@ -10,7 +10,7 @@ import { AuthController } from './auth.controller';
 import { User } from '../users/entities/user.entity';
 import { Permission } from '../permissions/entities/permission.entity';
 import { UserPermission } from '../user-permissions/entities/user-permission.entity';
-import { UsersModule } from 'src/users/users.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [

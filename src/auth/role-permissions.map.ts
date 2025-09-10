@@ -1,12 +1,12 @@
 // src/auth/role-permissions.map.ts
-import { Role } from './roles.enum';
 import { Resource, Action } from './permissions.enum';
+import { UserRole } from '../shared/enums/user-role.enum';
 
 export const RolePermissions: Record<
-  Role,
+  UserRole,
   { resource: Resource; action: Action }[]
 > = {
-  [Role.ADMINISTRATOR]: [
+  [UserRole.ADMINISTRATOR]: [
     { resource: Resource.USERS, action: Action.CREATE },
     { resource: Resource.USERS, action: Action.UPDATE },
     { resource: Resource.USERS, action: Action.DELETE },
@@ -39,7 +39,7 @@ export const RolePermissions: Record<
     { resource: Resource.INVENTORY, action: Action.READ },
   ],
 
-  [Role.MANAGER]: [
+  [UserRole.MANAGER]: [
     { resource: Resource.WAREHOUSES, action: Action.READ },
     { resource: Resource.WAREHOUSES, action: Action.CREATE },
     { resource: Resource.WAREHOUSES, action: Action.UPDATE },
@@ -69,7 +69,7 @@ export const RolePermissions: Record<
     // ❌ No tiene acceso a administrar usuarios
   ],
 
-  [Role.ASSISTANT]: [
+  [UserRole.ASSISTANT]: [
     { resource: Resource.WAREHOUSES, action: Action.READ },
     { resource: Resource.PRODUCTCATEGORIES, action: Action.CREATE },
     { resource: Resource.PRODUCTCATEGORIES, action: Action.UPDATE },
@@ -92,7 +92,7 @@ export const RolePermissions: Record<
     { resource: Resource.INVENTORY, action: Action.READ },
   ],
 
-  [Role.CHEF]: [
+  [UserRole.CHEF]: [
     { resource: Resource.STOCKWITHDRAWALS, action: Action.CREATE },
     { resource: Resource.STOCKWITHDRAWALS, action: Action.READ },
     { resource: Resource.INVENTORY, action: Action.READ },

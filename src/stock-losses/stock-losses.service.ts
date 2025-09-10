@@ -4,9 +4,9 @@ import { Repository } from 'typeorm';
 import { StockLoss } from './entities/stock-loss.entity';
 import { CreateStockLossDto } from './dto/create-stock-loss.dto';
 import { UpdateStockLossDto } from './dto/update-stock-loss.dto';
-import { Product } from 'src/products/entities/product.entity';
-import { Warehouse } from 'src/warehouses/entities/warehouse.entity';
-import { User } from 'src/users/entities/user.entity';
+import { Product } from '../products/entities/product.entity';
+import { Warehouse } from '../warehouses/entities/warehouse.entity';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class StockLossesService {

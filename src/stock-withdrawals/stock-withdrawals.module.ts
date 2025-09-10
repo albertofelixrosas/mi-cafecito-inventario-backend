@@ -5,7 +5,7 @@ import { Product } from '../products/entities/product.entity';
 import { Warehouse } from '../warehouses/entities/warehouse.entity';
 import { StockWithdrawalsService } from './stock-withdrawals.service';
 import { StockWithdrawalsController } from './stock-withdrawals.controller';
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../users/entities/user.entity';
 
 @Module({
   imports: [
