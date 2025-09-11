@@ -37,7 +37,7 @@ export class AuthController {
         throw new UnauthorizedException('Credenciales incorrectas');
       }
       return this.authService.login({
-        user_id: user.userId,
+        userId: user.userId,
         fullName: `${user.name} ${user.lastname}`,
       });
     } catch (error) {

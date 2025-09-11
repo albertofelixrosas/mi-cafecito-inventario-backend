@@ -36,11 +36,11 @@ export class AuthService {
   }
 
   async login(user: UserPayload) {
-    const tokens = await this.getTokens(user.user_id);
-    await this.updateRefreshToken(user.user_id, tokens.refreshToken);
+    const tokens = await this.getTokens(user.userId);
+    await this.updateRefreshToken(user.userId, tokens.refreshToken);
     return {
       ...tokens,
-      user: { user_id: user.user_id, fullName: user.fullName },
+      user: { userId: user.userId, fullName: user.fullName },
     };
   }
 
