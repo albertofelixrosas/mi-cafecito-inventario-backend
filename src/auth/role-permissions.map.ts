@@ -1,5 +1,6 @@
-// src/auth/role-permissions.map.ts
-import { Resource, Action } from './permissions.enum';
+import { Resource } from '../shared/enums/resource.enum';
+import { Action } from '../shared/enums/action.enum';
+
 import { UserRole } from '../shared/enums/user-role.enum';
 
 export const RolePermissions: Record<
