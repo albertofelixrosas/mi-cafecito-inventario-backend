@@ -7,15 +7,23 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { StockEntriesService } from './stock-entries.service';
 import { CreateStockEntryDto } from './dto/create-stock-entry.dto';
 import { UpdateStockEntryDto } from './dto/update-stock-entry.dto';
 import { StockEntry } from './entities/stock-entry.entity';
+import { AuthGuard } from '@nestjs/passport';
+import { PermissionsGuard } from '../auth/guards/permissions.guard';
+import { RequirePermission } from '../auth/decorators/require-permission.decorator';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { Resource } from '../shared/enums/resource.enum';
+import { Action } from '../shared/enums/action.enum';
 
 @ApiTags('Stock Entries')
 @Controller('stock-entries')
+@UseGuards(AuthGuard('jwt'), PermissionsGuard)
 export class StockEntriesController {
   constructor(private readonly stockEntriesService: StockEntriesService) {}
 
@@ -26,8 +34,12 @@ export class StockEntriesController {
     description: 'La entrada fue registrada exitosamente',
     type: StockEntry,
   })
-  create(@Body() createDto: CreateStockEntryDto) {
-    return this.stockEntriesService.create(createDto);
+  @RequirePermission(`${Resource.STOCKENTRIES}.${Action.CREATE}`)
+  create(
+    @Body() createDto: CreateStockEntryDto,
+    @CurrentUser('userId') userId: number,
+  ) {
+    return this.stockEntriesService.create(createDto, userId);
   }
 
   @Get()
@@ -37,6 +49,7 @@ export class StockEntriesController {
     description: 'Lista de entradas de stock',
     type: [StockEntry],
   })
+  @RequirePermission(`${Resource.STOCKENTRIES}.${Action.READ}`)
   findAll() {
     return this.stockEntriesService.findAll();
   }
@@ -49,6 +62,7 @@ export class StockEntriesController {
     type: StockEntry,
   })
   @ApiResponse({ status: 404, description: 'Entrada no encontrada' })
+  @RequirePermission(`${Resource.STOCKENTRIES}.${Action.READ}`)
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.stockEntriesService.findOne(id);
   }
@@ -60,6 +74,7 @@ export class StockEntriesController {
     description: 'Entrada actualizada correctamente',
     type: StockEntry,
   })
+  @RequirePermission(`${Resource.STOCKENTRIES}.${Action.UPDATE}`)
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateStockEntryDto,
@@ -71,6 +86,7 @@ export class StockEntriesController {
   @ApiOperation({ summary: 'Eliminar una entrada de stock' })
   @ApiResponse({ status: 200, description: 'Entrada eliminada' })
   @ApiResponse({ status: 404, description: 'Entrada no encontrada' })
+  @RequirePermission(`${Resource.STOCKENTRIES}.${Action.DELETE}`)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.stockEntriesService.remove(id);
   }

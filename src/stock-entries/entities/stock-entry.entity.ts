@@ -24,7 +24,11 @@ export class StockEntry {
   @Column({ name: 'user_id' })
   userId: number;
 
-  @Column({ name: 'income_at', type: 'timestamp' })
+  @Column({
+    name: 'income_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   incomeAt: Date;
 
   @Column({ type: 'int' })

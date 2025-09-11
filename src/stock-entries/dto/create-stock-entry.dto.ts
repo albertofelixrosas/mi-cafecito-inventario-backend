@@ -47,11 +47,4 @@ export class CreateStockEntryDto {
   @ApiProperty({ example: 2, description: 'ID del almacén' })
   @IsInt()
   warehouseId: number;
-
-  @ApiProperty({
-    example: 1,
-    description: 'ID del usuario que realiza el ingreso',
-  })
-  @IsInt()
-  userId: number;
 }

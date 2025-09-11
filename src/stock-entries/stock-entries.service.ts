@@ -21,8 +21,8 @@ export class StockEntriesService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(dto: CreateStockEntryDto): Promise<StockEntry> {
-    const { productId, warehouseId, userId, ...rest } = dto;
+  async create(dto: CreateStockEntryDto, userId: number): Promise<StockEntry> {
+    const { productId, warehouseId, ...rest } = dto;
 
     const product = await this.productRepository.findOneBy({ productId });
     const warehouse = await this.warehouseRepository.findOneBy({ warehouseId });
@@ -83,14 +83,6 @@ export class StockEntriesService {
       if (!warehouse)
         throw new NotFoundException(`Warehouse ${dto.warehouseId} not found`);
       entry.warehouse = warehouse;
-    }
-
-    if (dto.userId) {
-      const user = await this.userRepository.findOneBy({
-        userId: dto.userId,
-      });
-      if (!user) throw new NotFoundException(`User ${dto.userId} not found`);
-      entry.user = user;
     }
 
     Object.assign(entry, dto);
