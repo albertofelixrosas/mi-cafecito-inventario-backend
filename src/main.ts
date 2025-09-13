@@ -33,7 +33,7 @@ async function bootstrap() {
         description: 'Introduce el token JWT con el prefijo Bearer',
         in: 'header',
       },
-      'JWT-auth', // 🔑 Este es el nombre de la referencia (puedes ponerle cualquier string)
+      'access-token', // 🔑 Este es el nombre de la referencia (puedes ponerle cualquier string)
     )
     .build();
 
